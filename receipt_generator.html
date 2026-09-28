@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Test | Receipt Generator</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://pyscript.net/releases/2025.3.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2025.3.1/core.js"></script>
+
+    <style>
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+
+            font-family: 'Jost', sans-serif;
+            color: #3f3040;
+
+            background-image:
+                linear-gradient(
+                    rgba(255, 209, 220, 0.30),
+                    rgba(255, 209, 220, 0.30)
+                ),
+                url("bg.jpg");
+
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        .navbar {
+            background: #ffffff !important;
+
+            box-shadow:
+                0 4px 18px rgba(184, 92, 131, 0.15);
+
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-logo {
+            height: 100px;
+            width: auto;
+
+            object-fit: contain;
+
+            transition: 0.3s;
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.04);
+        }
+
+        .nav-link {
+            color: #000000 !important;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #b85c83 !important;
+        }
+
+        .navbar-toggler {
+            border-color: #f3bfd5 !important;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23b85c83' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .app-card {
+            border: none;
+            border-radius: 24px;
+
+            background: rgba(255, 214, 231, 0.55);
+
+            box-shadow:
+                0 18px 45px rgba(84, 55, 88, 0.25);
+
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .app-card .card-header {
+            border-radius: 0;
+            background: rgba(255, 209, 220, 0.35);
+            color: #49384d;
+            padding: 1.4rem;
+            border: none;
+        }
+
+        .card-header i,
+        .card-header span {
+            color: #b8759a;
+            margin-bottom: 12px;
+        }
+
+        .card-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: #49384d;
+        }
+
+        .card-header small {
+            color: #6b4a5c;
+            font-size: 0.9rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0.9rem 1.1rem;
+
+            border: 2px solid #ead7e4;
+            border-radius: 13px;
+            margin-bottom: 0.7rem;
+
+            background-color: rgba(255, 250, 253, 0.95);
+            transition: 0.3s;
+        }
+
+        .menu-item:hover {
+            border-color: #b8759a;
+            background-color: #fff3f7;
+        }
+
+        .menu-item label {
+            font-weight: 600;
+            color: #49384d;
+            margin-left: 0.6rem;
+            cursor: pointer;
+        }
+
+        .menu-item .price {
+            color: #974d73;
+            font-weight: 700;
+        }
+
+        .form-check-input {
+            width: 1.2em;
+            height: 1.2em;
+        }
+
+        .form-check-input:checked {
+            background-color: #b85c83;
+            border-color: #b85c83;
+        }
+
+        .btn-order {
+            background: #b85c83;
+            border: none;
+            border-radius: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 13px;
+
+            box-shadow:
+                0 7px 18px rgba(145, 81, 126, 0.25);
+
+            transition: 0.3s;
+        }
+
+        .btn-order:hover {
+            transform: translateY(-2px);
+            background: #a84e75;
+            color: white;
+        }
+
+        .btn-order:active {
+            transform: translateY(0);
+        }
+
+        #show {
+            min-height: 3rem;
+        }
+
+        .result-box {
+            background-color: #fff3f7;
+            border-left: 5px solid #b85c83;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+        }
+
+        .receipt-total {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #974d73;
+        }
+
+        hr {
+            border-color: #ead7e4;
+            opacity: 0.8;
+        }
+
+        .card-footer {
+            background-color: rgba(255, 250, 253, 0.95);
+            border-top: 2px solid #ead7e4;
+            color: #7a6a7d;
+        }
+
+        footer {
+            background: #ffffff !important;
+
+            margin-top: 16px;
+
+            padding: 8px 0 !important;
+
+            box-shadow:
+                0 -4px 18px rgba(184, 92, 131, 0.15);
+        }
+
+        footer p {
+            color: #000000;
+            font-size: 0.75rem;
+            margin-bottom: 0px;
+        }
+
+        footer .container p:first-child {
+            margin-bottom: 2px;
+        }
+
+        footer i,
+        footer span {
+            color: #b85c83;
+        }
+
+        py-terminal {
+            display: none;
+        }
+
+        @media (max-width: 576px) {
+            .brand-logo {
+                height: 70px;
+            }
+
+            .card-header h3 {
+                font-size: 1.7rem;
+            }
+
+            .app-card {
+                border-radius: 18px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-dark">
+        <div class="container">
+
+            <a class="navbar-brand" href="index.html">
+                <img src="logo.png" alt="Ives Logo" class="brand-logo">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <span class="me-1"><svg style="vertical-align:-2px;" width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#b85c83"><rect x="2" y="4" width="2" height="16"/><rect x="6" y="4" width="1" height="16"/><rect x="9" y="4" width="3" height="16"/><rect x="14" y="4" width="1" height="16"/><rect x="17" y="4" width="2" height="16"/><rect x="21" y="4" width="1" height="16"/></svg></span>
+                            SKU Generator
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="receipt_generator.html">
+                            <span class="me-1"><svg style="vertical-align:-2px;" width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#b85c83" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3V3z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg></span>
+                            Receipt Generator
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="container py-5 flex-grow-1" style="margin-top: 40px;">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+
+                <div class="card app-card">
+
+                    <div class="card-header text-center">
+                        <span style="display:inline-block;"><svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#b85c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5.5c0-1.93-2.24-3.5-5-3.5s-5 1.57-5 3.5S9.24 9 12 9s5 1.57 5 3.5-2.24 3.5-5 3.5-5-1.57-5-3.5"/></svg></span>
+                        <h3 class="mb-1">
+                            Receipt Generator
+                        </h3>
+                        <small>
+                            Indian × Filipino Accessories
+                        </small>
+                    </div>
+
+                    <div class="card-body p-4">
+
+                        <h5 class="mb-3" style="color:#49384d; font-weight:600;">
+                            <span class="me-1"><svg style="vertical-align:-3px;" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#b85c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l1.5 1.5L8 5"/><path d="M11 6h9"/><path d="M4 12l1.5 1.5L8 11"/><path d="M11 12h9"/><path d="M4 18l1.5 1.5L8 17"/><path d="M11 18h9"/></svg></span>
+                            Items
+                        </h5>
+
+                        <form id="order-form">
+
+                            <p class="text-uppercase small fw-bold mb-2" style="color:#b8759a; letter-spacing:1px;">Earrings</p>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item1" value="349">
+                                    <label id="item1-label" for="item1">Bahubali Earrings</label>
+                                </div>
+                                <span class="price">&#8369;349</span>
+                            </div>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item2" value="99">
+                                    <label id="item2-label" for="item2">Stud Earrings</label>
+                                </div>
+                                <span class="price">&#8369;99</span>
+                            </div>
+
+                            <p class="text-uppercase small fw-bold mb-2 mt-3" style="color:#b8759a; letter-spacing:1px;">Bangles & Necklaces</p>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item3" value="299">
+                                    <label id="item3-label" for="item3">Kashmiri Bangles Set</label>
+                                </div>
+                                <span class="price">&#8369;299</span>
+                            </div>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item4" value="199">
+                                    <label id="item4-label" for="item4">Layered Necklace</label>
+                                </div>
+                                <span class="price">&#8369;199</span>
+                            </div>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item5" value="459">
+                                    <label id="item5-label" for="item5">Rani Haar</label>
+                                </div>
+                                <span class="price">&#8369;459</span>
+                            </div>
+
+                            <p class="text-uppercase small fw-bold mb-2 mt-3" style="color:#b8759a; letter-spacing:1px;">Anklets & Rings</p>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item6" value="179">
+                                    <label id="item6-label" for="item6">Payal / Jhanjar</label>
+                                </div>
+                                <span class="price">&#8369;179</span>
+                            </div>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item7" value="129">
+                                    <label id="item7-label" for="item7">Bichiya Rings</label>
+                                </div>
+                                <span class="price">&#8369;129</span>
+                            </div>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item8" value="99">
+                                    <label id="item8-label" for="item8">Finger Rings</label>
+                                </div>
+                                <span class="price">&#8369;99</span>
+                            </div>
+
+                            <p class="text-uppercase small fw-bold mb-2 mt-3" style="color:#b8759a; letter-spacing:1px;">Hair Accessories</p>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item9" value="99">
+                                    <label id="item9-label" for="item9">Sampaguita Hair Comb</label>
+                                </div>
+                                <span class="price">&#8369;99</span>
+                            </div>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item10" value="79">
+                                    <label id="item10-label" for="item10">Gajra</label>
+                                </div>
+                                <span class="price">&#8369;79</span>
+                            </div>
+
+                            <p class="text-uppercase small fw-bold mb-2 mt-3" style="color:#b8759a; letter-spacing:1px;">Purses</p>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item11" value="349">
+                                    <label id="item11-label" for="item11">Potli Bag</label>
+                                </div>
+                                <span class="price">&#8369;349</span>
+                            </div>
+
+                            <div class="menu-item">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" id="item12" value="499">
+                                    <label id="item12-label" for="item12">Banig Bag</label>
+                                </div>
+                                <span class="price">&#8369;499</span>
+                            </div>
+
+                            <div class="d-grid mt-4">
+                                <button type="button" py-click="create_order" class="btn btn-order btn-lg text-white">
+                                    <span class="me-1"><svg style="vertical-align:-2px;" width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3V3z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg></span>
+                                    Create Order
+                                </button>
+                            </div>
+
+                        </form>
+
+                        <hr class="my-4">
+
+                        <div id="show">
+                            <p class="text-center mb-0" style="color:#b85c83;">Your order summary will appear here.</p>
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer text-center small py-3" style="color:#b85c83;">
+                        Select your items and click "Create Order"
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center text-light py-4">
+        <div class="container">
+            <p class="mb-1">
+                <span class="me-1"><svg style="vertical-align:-3px;" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#b85c83"><path d="M6 3h12l4 6-10 12L2 9l4-6z"/></svg></span>
+                Ives — Indian × Filipino Accessories
+            </p>
+            <p class="mb-0">
+                Receipt Generator
+            </p>
+        </div>
+    </footer>
+
+    <py-script src="main.py"></py-script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
